@@ -26,5 +26,5 @@ else
 /root/tongji.sh -i ip -f $file;
 /usr/bin/scp -oStrictHostKeyChecking=no $file.txt root@node1.test.com:/root/$file.txt;
 fi
-[ -f $file.txt ] && rm -f $file.txt;
+#[ -f $file.txt ] && rm -f $file.txt;
 

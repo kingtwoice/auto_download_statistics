@@ -391,9 +391,11 @@ function RM_LOGFILE {
 }
 
 function SEND_EMAIL {
-	SUBJECT="CDN数据统计";
-	DATE=$(date -d '1 day ago' +%Y-%m-%d);
-	echo "这是$DATE，CDN上的日志统计数据，包含栏目页和内容页，httpcode为2xx和3xx，User-Agent为正常用户值。请查收！" | mailx -s $SUBJECT -a $STOREFILE $EMAILUSER
+	#SUBJECT="CDN数据统计";
+	#DATE=$(date -d '1 day ago' +%Y-%m-%d);
+	#echo "这是$DATE，CDN上的日志统计数据，包含栏目页和内容页，httpcode为2xx和3xx，User-Agent为正常用户值。请查收！" | mailx -s $SUBJECT -a $STOREFILE $EMAILUSER
+	#合并任务
+	[[ -f $STOREFILE ]] && echo $STOREFILE >> $TASKFILE;
 }
 
 function CLEAR_UP {
@@ -442,11 +444,14 @@ function CHECK_MONTH_FIRSTDAY {
 		fi
 		[ -f $LAST_MONTH_FILE_TEMP ] && rm -f $LAST_MONTH_FILE_TEMP &> /dev/null;
 		tar -zcf $lastmonth.cdn.tar.gz $lastmonth*.txt;
-		SUBJECT="$lastmonth，CDN月数据统计";
-		echo "这是$lastmonth月,CDN上一个月的日志统计数据总和，压缩包tar.gz为$lastmonth月中每一天的统计数据,用作留底检查。请查收！" | mailx -s $SUBJECT -a $LAST_MONTH_FILE -a $lastmonth.cdn.tar.gz $EMAILUSER
-		[ -d /usr/king/ ] || mkdir -p /usr/king
-                mv $lastmonth.cdn.tar.gz /usr/king/
-		rm -f $lastmonth*.txt &> /dev/null;
+		#SUBJECT="$lastmonth，CDN月数据统计";
+		#echo "这是$lastmonth月,CDN上一个月的日志统计数据总和，压缩包tar.gz为$lastmonth月中每一天的统计数据,用作留底检查。请查收！" | mailx -s $SUBJECT -a $LAST_MONTH_FILE -a $lastmonth.cdn.tar.gz $EMAILUSER
+		#[ -d /usr/king/ ] || mkdir -p /usr/king
+                #mv $lastmonth.cdn.tar.gz /usr/king/
+		#rm -f $lastmonth*.txt &> /dev/null;
+		#合并任务
+		[[ -f $LAST_MONTH_FILE ]] && echo $LAST_MONTH_FILE >> $TASKFILE;
+		[[ -f $lastmonth.cdn.tar.gz ]] && echo $lastmonth.cdn.tar.gz >> $TASKFILE;
 		fi
 }
 
@@ -559,7 +564,7 @@ deletelog=0;
 #是否发送邮件
 sendmail=0;
 #邮件用户文件
-EMAILFILE=/root/emailuser;
+EMAILFILE=$PWD/emailuser;
 #邮件发送地址;
 EMAILUSER=$(cat $EMAILFILE);
 #统计类型,0为统计次数 默认值 
@@ -571,6 +576,8 @@ monthcheck=0;
 AUTO_FILE=("IP" "CODE" "IP_URL" "IP_TIME" "URL_TIME" "IP_TIME_URL" "PV_CODE_OK" "PV_CODE_UA_OK" "INNER_IP_HTML" "OUTTER_IP_HTML" "UA_ERROR" "UA_HTML_ERROR");
 #配置文件
 cfgfile=$PWD/tongji.conf;
+#邮件任务文件
+TASKFILE=$PWD/emailtask/task_cdnpv;
 if [[ $# == 0 ]];then
 	 urlfilter=1;
 	 codefilter=1;
@@ -734,7 +741,7 @@ done
 trap 'CLEAR_UP' INT;
 #[ -f ./tongji.conf ] && . ./tongji.conf;
 #[ -f ./tongji.index ] && . ./tongji.index;
-[ -f $cfgfile ] && . $cfgfile;
+[[ -f $cfgfile ]] && . $cfgfile;
 GZIPFILE
 if [ $auto -eq 1 ];then
 #	deletelog=0;
@@ -754,7 +761,8 @@ fi
 [ $sendmail -eq 1 ] && SEND_EMAIL
 
 [ $monthcheck -eq 1 ] && CHECK_MONTH_FIRSTDAY
-
+#合并完成
+echo "<--FINISH-->" >> $TASKFILE;
 #echo "urlfilter:$urlfilter";
 #echo "referfilter:$referfilter";
 #echo "uafilter:$uafilter";

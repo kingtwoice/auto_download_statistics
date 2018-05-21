@@ -192,16 +192,23 @@ function SEND_EMAIL {
 	if [ $1 -eq 1 ];then
 		local lastmonth=$(date -d '1 month ago' +%Y-%m);
 		tar -zcf $lastmonth.umeng.tar.gz $lastmonth*.csv;
-		local subject="$lastmonth，友盟月数据统计";
-		echo "这是$lastmonth月，友盟上的访问数据，附件.csv为友盟上一个月的总数据下载文件，附件url_merge.csv为URL合并后的统计文件，附件.tar.gz为上一月每一天的数据文件打包，用作留底检查，请查收！" | mailx -s $subject -a $storefile -a $mergefile -a $lastmonth.umeng.tar.gz $EMAILUSER
-		[ -d /usr/king/ ] || mkdir -p /usr/king
-		mv $lastmonth.umeng.tar.gz /usr/king/
-		rm -f $lastmonth*.csv &> /dev/null;	
+		#local subject="$lastmonth，友盟月数据统计";
+		#echo "这是$lastmonth月，友盟上的访问数据，附件.csv为友盟上一个月的总数据下载文件，附件url_merge.csv为URL合并后的统计文件，附件.tar.gz为上一月每一天的数据文件打包，用作留底检查，请查收！" | mailx -s $subject -a $storefile -a $mergefile -a $lastmonth.umeng.tar.gz $EMAILUSER
+		#[ -d /usr/king/ ] || mkdir -p /usr/king
+		#mv $lastmonth.umeng.tar.gz /usr/king/
+		#rm -f $lastmonth*.csv &> /dev/null;	
+		#任务合并
+		[[ -f $storefile ]] && echo $storefile >> $TASKFILE;
+		[[ -f $mergefile ]] && echo $mergefile >> $TASKFILE;
+		[[ -f $lastmonth.umeng.tar.gz ]] && echo $lastmonth.umeng.tar.gz >> $TASKFILE;
 	else
-		subject="友盟数据统计";
-        	local date=${storefile%%.*};
-		date=${date##*/};
-        	echo "这是$date，友盟上的访问数据，附件.csv文件为友盟下载文件，附件url_merge.csv为URL合并后统计文件。请查收！" | mailx -s $subject -a $storefile -a $mergefile $EMAILUSER
+		#subject="友盟数据统计";
+        	#local date=${storefile%%.*};
+		#date=${date##*/};
+        	#echo "这是$date，友盟上的访问数据，附件.csv文件为友盟下载文件，附件url_merge.csv为URL合并后统计文件。请查收！" | mailx -s $subject -a $storefile -a $mergefile $EMAILUSER
+		#任务合并
+		[[ -f $storefile ]] && echo $storefile >> $TASKFILE;
+		[[ -f $mergefile ]] && echo $mergefile >> $TASKFILE;
 	fi
 	return 0;
 }
@@ -222,7 +229,7 @@ function CLEAR_UP {
 }
 
 function TRY_DOWNLOAD_AGAIN {
-        echo "友盟日志未下载成功，已重新尝试下载" | mailx -s "友盟日志自动下载出错"  $EMAILADM;
+        echo "友盟日志未下载成功或数据有误，已重新尝试下载" | mailx -s "友盟日志自动下载出错"  $EMAILADM;
 	[ $1 -eq 0 ] && eval SET_DOWNLOADURLFILE_BY_$FUNFLAG && DOWNLOAD_UMFILE && return 0;
 	[ $1 -eq 1 ] && SET_DOWNLOADURLFILE_BY_MONTH && DOWNLOAD_UMFILE && return 0;
 }
@@ -233,7 +240,7 @@ if CHECK_MONTH_FIRSTDAY ;then
         MONTH=1;
         SET_DOWNLOADURLFILE_BY_MONTH;
         DOWNLOAD_UMFILE;
-        [ -f $storefile ] || TRY_DOWNLOAD_AGAIN;
+        [ -f $storefile ] || TRY_DOWNLOAD_AGAIN 1;
         [ $MERGE -eq 1 ] && MERGE_URL;
         [ $SEND_EMAIL -eq 1 ] && SEND_EMAIL 1;
 fi
@@ -257,6 +264,8 @@ EMAILFILE=/root/emailuser;
 EMAILFILE1=/root/emailuser1;
 EMAILUSER=$(cat $EMAILFILE);
 EMAILADM=$(cat $EMAILFILE1);
+#邮件任务文件
+TASKFILE=/root/emailtask/task_umeng;
 #是否合并URL
 MERGE=0;
 #是否发送邮件,仅当TYPE为0时发送。即只有单个文件时发送。
@@ -373,7 +382,9 @@ else
 		exit 1;
 	fi
 fi
-[ -f $storefile ] || TRY_DOWNLOAD_AGAIN;
+[ -f $storefile ] && [ $(wc -l $storefile | cut -d' ' -f1) -gt 50 ] || TRY_DOWNLOAD_AGAIN 0;
 [ $MERGE -eq 1 ] && MERGE_URL;
 [ $SEND_EMAIL -eq 1 ] && SEND_EMAIL 0;
 [ $MC -eq 1 ] && MONTH_MISSION;
+#合并完成
+echo "<--FINISH-->" >> $TASKFILE;
