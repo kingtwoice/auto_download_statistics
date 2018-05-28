@@ -8,8 +8,10 @@ function gzipfile {
 	filepath=$(find "$(pwd)" -name "$file");
 	if [[ $filepath == *.gz ]];then
 		gzip -d $filepath;
-		filepath=${filepath%.*};	
+		filepath=${filepath%.*};
+		return 0;	
 	fi
+	return 1;
 }
 
 function get_watchperson {
@@ -50,7 +52,7 @@ TASKFILE=/root/emailtask/task_cdnlive;
 #[[ -f $filepath ]] && echo "yes" || echo "no"
 echo "$TIME,视频在线人数统计" > $OUTPUTFILE;
 for((i=1;i<=24;i++));do
-	gzipfile $i;
+	if gzipfile $i ;then
 	[[ -f $filepath ]] && get_watchperson $filepath;
 	let j=$i-1;
  	echo "======= $j:00 至 $i:00 =======" >> $OUTPUTFILE;
@@ -60,6 +62,7 @@ for((i=1;i<=24;i++));do
 	echo "汉语直播在线人数峰值: $num" >> $OUTPUTFILE;
 	echo >> $OUTPUTFILE;
   	[[ -f $filepath ]] && rm -f $filepath;
+	fi
 done
 
 sed -i -e "2i\汉语直播在线人数峰值:$MAX_HY" -e "2i\藏语在线人数峰值:$MAX_ZY" -e '2i\以下为分时段统计' $OUTPUTFILE;

@@ -27,21 +27,41 @@ function GET_DOWNLOAD_ADDR {
 echo "开始分析日志下载地址";
 local RETURN=$(curl -l -e "https://console.upyun.com/toolbox/log/log_analy/" -A "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36" -H "x-requested-with:XMLHttpRequest" -H ":authority:console.upyun.com" -H ":method:GET" -H ":path:/api/analysis/archives/?bucket_name=$SERVICE&date=$DATE&domain=$DOMAIN&useSsl=true" -H ":scheme:https" -X GET -b ./upyun.cookie "https://console.upyun.com/api/analysis/archives/?bucket_name=$1&date=$2&domain=$3&useSsl=true" 2>/dev/null);
 #echo $RETURN;
-TOTAL=$(echo $RETURN | jq ".data.data | length" 2>/dev/null);
-if [[ $TOTAL -lt 1 ]];then
-	return 1;
-fi
+
+#TOTAL=$(echo $RETURN | jq ".data.data | length" 2>/dev/null);
+#if [[ $TOTAL -lt 1 ]];then
+#	return 1;
+#fi
+if [[ $TIME == "*" ]];then
+        for((i=0;i<=23;i++));do
+        TOTAL[$i]=$i;
+        done
+        else
+        local tempstr=$(echo "$TIME" | awk 'BEGIN{FS=","}{for(i=1;i<=NF;i++)
+                                {if(index($i,"-"))
+                                        {split($i,test,"-");
+                                        for(j=test[1]-1;j<test[2];j++) printf j " ";} 
+                                else printf ($i-1) " ";}
+                          }');
+	TOTAL=($tempstr);
+        fi
+
+
+
 ARR=$(echo $RETURN | jq ".data.data" 2>/dev/null);
-for ((i=0;i<$TOTAL;i++));do
+totallen=${#TOTAL[*]};
+local index=0;
+for i in ${TOTAL[@]};do
         local temp=$(echo $ARR | jq ".[$i].url");
 	local urls=$(echo $temp | sed s/\"//g);
-	URL[$i]=$urls;
-	logfile[$i]=${urls##*/};
-	if [ $i -eq 0 ];then
+	URL[$index]=$urls;
+	logfile[$index]=${urls##*/};
+	if [ $index -eq 0 ];then
 		echo $urls > $DOWNLOADURLFILE;
 	else
 		echo $urls >> $DOWNLOADURLFILE;
 	fi	
+	let index+=1;
 done
 echo "日志下载地址分析结束,准备下载";
 return 0;
@@ -59,7 +79,7 @@ function RM_OLD_FILE {
 function DOWNLOAD_LOGFILE {
 	echo "开始下载日志文件,下载日志存放在download.log中";
 	wget -c -i $DOWNLOADURLFILE -o $DOWNLOADLOGFILE -U "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36";
-	[ -f $DOWNLOADURLFILE ] && rm -f $DOWNLOADURLFILE;
+	#[ -f $DOWNLOADURLFILE ] && rm -f $DOWNLOADURLFILE;
 }
 
 #CTRL+C前的清理
@@ -84,12 +104,15 @@ SERVICE=$(cut -d" " -f1 $SERVICEFILE);
 DOMAIN=$(cut -d" " -f2 $SERVICEFILE);
 #下载日期
 DATE=$(date -d $DAY' days ago' +%F);
+#下载时间,第几小时的日志,*为1-24,也可写为1-24,多个分开的时间可写为如"5-9 11 13-18"
+TIME="*";
 
 EMAILFILE=/root/emailuser1;
 EMAILUSER=$(cat $EMAILFILE);
 
 function SET_VAL {
 	eval $2=$1;
+	return $?;
 }
 function PRINT_ERR {
 	echo -ne "\033[31m";
@@ -107,7 +130,7 @@ function CHECK_EXIT {
 function CHECK_COMPLETE {
 	completedlen=$(grep -o '100%' $DOWNLOADLOGFILE | wc -l);
 	# completedlen=${#completed[*]};
-	if [ $completedlen -lt $TOTAL ];then
+	if [ $completedlen -lt $totallen ];then
 		return 1;
 	fi	
 	return 0;
@@ -154,12 +177,18 @@ case "$1" in
         shift;
 
 ;;
+-t)
+	shift;
+	SET_VAL $1 "TIME";
+	CHECK_EXIT $?;
+	shift;
+;;
 *)
 	CHECK_EXIT 1;
 ;;
 esac
 done
-trap 'CLEAR_UP' INT;
+trap 'CLEAR_UP' INT EXIT QUIT ABOR KILL TERM;
 if GET_DOWNLOAD_ADDR $SERVICE $DATE $DOMAIN;then
 	RM_OLD_FILE && DOWNLOAD_LOGFILE
 else
@@ -171,7 +200,7 @@ else
 fi
 if ! CHECK_COMPLETE;then
 	COMPLETEDLOG=$PWD/completed.log;
-	msg="$(date +%F' '%T) -- $SERVICE:$DOMAIN,日志未全部下载完成,已下载:$completedlen;总共:$TOTAL.附件为具体未下载日志"
+	msg="$(date +%F' '%T) -- $SERVICE:$DOMAIN,日志未全部下载完成,已下载:$completedlen;总共:$totallen.附件为具体未下载日志"
 	echo $msg > $COMPLETEDLOG;
 	echo "未下载日志:" >> $COMPLETEDLOG;
 	DOWNLOAD_NOT_COMPLETE

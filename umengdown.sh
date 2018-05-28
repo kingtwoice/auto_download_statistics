@@ -345,7 +345,7 @@ case "$1" in
 ;;
 esac
 done
-trap 'CLEAR_UP' INT;
+trap 'CLEAR_UP' INT EXIT QUIT ABOR KILL TERM;
 eval SET_DOWNLOADURLFILE_BY_$FUNFLAG;
 if TEST_LOGIN;then
 echo "友盟登录成功";
@@ -368,7 +368,7 @@ else
 			LOGIN $NOCAPPKEY $CSESSIONID $SIG;
 		else
 			echo "滑动验证失败";
-			CLEAR_UP;
+			#CLEAR_UP;
 			exit 1;
 		fi
 	fi
@@ -377,7 +377,7 @@ else
 		echo "友盟登录成功";
 		DOWNLOAD_UMFILE;
 	else
-		CLEAR_UP;
+		#CLEAR_UP;
 		echo "Login failed";
 		exit 1;
 	fi

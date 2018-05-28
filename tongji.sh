@@ -192,7 +192,7 @@ function AWK_FUNC {
 		cat $AWKTEMPFILE >> $7;
 	fi
 	
-	[ -f $AWKTEMPFILE ] && rm -f $AWKTEMPFILE &> /dev/null;
+	#[ -f $AWKTEMPFILE ] && rm -f $AWKTEMPFILE &> /dev/null;
 
 }
 #统计数据
@@ -211,7 +211,7 @@ function GET_DATA {
 	done
 	#return 0;
 	if [ $INDEX -gt 1 ];then
-		if awk -v t="$7" 'BEGIN{
+		awk -v t="$7" 'BEGIN{
 			size[0]="Byte";
 			size[1]="KB";
 			size[2]="MB";
@@ -253,9 +253,7 @@ function GET_DATA {
 				x=x""size[j];
 				print total,x,"总流量";
 			}
-		}' $TEMPFILE | sort -rn > $STOREFILE;then
-			[ -f $TEMPFILE ] && rm -f $TEMPFILE &> /dev/null;
-		fi
+		}' $TEMPFILE | sort -rn > $STOREFILE
 	else
 		mv $TEMPFILE $STOREFILE;
 	fi
@@ -316,14 +314,16 @@ function SET_ITEM {
 	return 0;
 }
 #设置urlfilter的值
-function SET_FILTER {
-	if [[ $1 == 0 || $1 == 1 || $1 == 2 ]];then
-		eval $2=$1;
-		return 0;
-	else 
-		return 1;
-	fi
-}
+#function SET_FILTER {
+#eval $2=$1;
+#return $?;
+	#if [[ $1 == 0 || $1 == 1 || $1 == 2 ]];then
+	#	eval $2=$1;
+#		return 0;
+#	else 
+#		return 1;
+#	fi
+#}
 
 #设置referfilter的值
 #function SET_REFERFILTER {
@@ -346,12 +346,14 @@ function SET_FILTER {
 
 #设置type auto的值
 function SET_VAL {
-	if [[ $1 == 0 || $1 == 1 ]];then
-		eval $2=$1;
-		return 0;
-	else 
-		return 1;
-	fi
+eval $2=$1;
+return $?;
+#	if [[ $1 == 0 || $1 == 1 ]];then
+#		eval $2=$1;
+#		return 0;
+#	else 
+#		return 1;
+#	fi
 }
 #赋值出错时打印使用方法
 function PRINT_ERR {
@@ -620,67 +622,67 @@ case "$1" in
 ;;
 -uf)
 	shift;
-	SET_FILTER $1 "urlfilter";
+	SET_VAL $1 "urlfilter";
 	CHECK_EXIT $?;
 	shift;
 	
 ;;
 
 --url-filter=*)
-	SET_FILTER ${1#*=} "urlfilter";
+	SET_VAL ${1#*=} "urlfilter";
 	CHECK_EXIT $?;
 	shift;
 ;;
 
 -rf)
 	shift;
-	SET_FILTER $1 "referfilter";
+	SET_VAL $1 "referfilter";
 	CHECK_EXIT $?;
 	shift;
 
 ;;
 
 --refer-filter=*)
-	SET_FILTER ${1#*=} "referfilter";
+	SET_VAL ${1#*=} "referfilter";
 	CHECK_EXIT $?;
 	shift;
 ;;
 
 -uaf)
 	shift;
-	SET_FILTER $1 "uafilter";
+	SET_VAL $1 "uafilter";
 	CHECK_EXIT $?;
 	shift;
 
 ;;
 
 --ua-filter=*)
-	SET_FILTER ${1#*=} "uafilter";
+	SET_VAL ${1#*=} "uafilter";
 	CHECK_EXIT $?;
 	shift;
 ;;
 -cf)
 	shift;
-	SET_FILTER $1 "codefilter";
+	SET_VAL $1 "codefilter";
 	CHECK_EXIT $?;
 	shift;
 ;;
 
 --code-filter=*)
-	SET_FILTER ${1#*=} "codefilter";
+	SET_VAL ${1#*=} "codefilter";
 	CHECK_EXIT $?;
 	shift;
 ;;
 
 -ipf)
 	shift;
-	SET_FILTER $1 "ipfilter";
+	SET_VAL $1 "ipfilter";
 	CHECK_EXIT $?;
 	shift;
 ;;
 
 --ip-filter=*)
-	SET_FILTER ${1#*=} "ipfilter";
+	SET_VAL ${1#*=} "ipfilter";
 	CHECK_EXIT $?;
 	shift;
 ;;
@@ -738,10 +740,12 @@ case "$1" in
 ;;
 esac
 done
-trap 'CLEAR_UP' INT;
+trap 'CLEAR_UP' INT EXIT QUIT ABOR KILL TERM;
 #[ -f ./tongji.conf ] && . ./tongji.conf;
 #[ -f ./tongji.index ] && . ./tongji.index;
-[[ -f $cfgfile ]] && . $cfgfile;
+if [ -f $cfgfile ]; then
+        . $cfgfile
+fi
 GZIPFILE
 if [ $auto -eq 1 ];then
 #	deletelog=0;
