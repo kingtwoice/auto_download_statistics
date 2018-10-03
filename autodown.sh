@@ -28,10 +28,10 @@ echo "开始分析日志下载地址";
 local RETURN=$(curl -l -e "https://console.upyun.com/toolbox/log/log_analy/" -A "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36" -H "x-requested-with:XMLHttpRequest" -H ":authority:console.upyun.com" -H ":method:GET" -H ":path:/api/analysis/archives/?bucket_name=$SERVICE&date=$DATE&domain=$DOMAIN&useSsl=true" -H ":scheme:https" -X GET -b ./upyun.cookie "https://console.upyun.com/api/analysis/archives/?bucket_name=$1&date=$2&domain=$3&useSsl=true" 2>/dev/null);
 #echo $RETURN;
 
-#TOTAL=$(echo $RETURN | jq ".data.data | length" 2>/dev/null);
-#if [[ $TOTAL -lt 1 ]];then
-#	return 1;
-#fi
+local datalist=$(echo $RETURN | jq ".data.data | length" 2>/dev/null);
+if [[ $datalist -lt 1 ]];then
+	return 1;
+fi
 if [[ $TIME == "*" ]];then
         for((i=0;i<=23;i++));do
         TOTAL[$i]=$i;
@@ -188,7 +188,7 @@ case "$1" in
 ;;
 esac
 done
-trap 'CLEAR_UP' INT EXIT QUIT ABOR KILL TERM;
+trap 'CLEAR_UP' INT EXIT QUIT KILL TERM;
 if GET_DOWNLOAD_ADDR $SERVICE $DATE $DOMAIN;then
 	RM_OLD_FILE && DOWNLOAD_LOGFILE
 else

@@ -24,6 +24,7 @@ function clearfile {
 		for line in $(cat $file);do
                 	[[ $line == *.gz ]] && mv $line /usr/king/ 
         	done
+		cat $file > bak_$file;
 		echo -n > $file;
 	done
  find . -maxdepth 1 -regextype "posix-egrep" -mtime +30 -a -regex ".*[0-9]{4}.*(txt|csv)$" |xargs rm -f
@@ -34,7 +35,15 @@ echo "send email..";
 clear_last_line;
 subject="牦牦TV数据统计";
 echo "牦牦TV数据统计。请查收！" | mailx -s $subject $filelist $EMAILUSER;
-[ $? -eq 0 ] && echo $(date +%F) Finish >> $SENDFILE && clearfile;
+if [ $? -eq 0 ];then
+sleep 60;
+	if ! [ -a /root/dead.letter ];then
+  		echo $(date +%F) Finish >> $SENDFILE && clearfile;
+	else
+		rm -f /root/dead.letter &> /dev/null;
+	fi
+fi
+
 }
 
 LOGFILE=emailtask/tasklog;
@@ -42,7 +51,7 @@ FILES=$(find ./emailtask/ -name "task_*");
 TOTALTASK=0;
 READY=0;
 SENDFILE=emailtask/sendemail
-EMAILUSER=wangbing@xzitv.com,huangzhao@xzitv.com;
+EMAILUSER=wangbing@xzitv.com,huangzhao@xzitv.com,libo@xzitv.com,sunrui@xzitv.com;
 fgrep "$(date +%F) Finish" $SENDFILE &> /dev/null && exit 0;
 LINE=$(cat $SENDFILE | wc -l);
 [ $LINE -gt 30 ] && echo -n > $SENDFILE;

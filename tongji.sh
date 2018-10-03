@@ -192,7 +192,7 @@ function AWK_FUNC {
 		cat $AWKTEMPFILE >> $7;
 	fi
 	
-	#[ -f $AWKTEMPFILE ] && rm -f $AWKTEMPFILE &> /dev/null;
+	[ -f $AWKTEMPFILE ] && rm -f $AWKTEMPFILE &> /dev/null;
 
 }
 #统计数据
@@ -546,7 +546,7 @@ codefilter=0;
 #IP 过滤默认关闭
 ipfilter=0;
 #URL过滤字符串默认值
-URL_FILTER_STR="\\\.html /$";
+URL_FILTER_STR="\\\.html /$ /\\\?";
 #Refer过滤字符串默认值
 REFER_FILTER_STR="http";
 #User-Agent过滤字符串默认值
@@ -740,7 +740,7 @@ case "$1" in
 ;;
 esac
 done
-trap 'CLEAR_UP' INT EXIT QUIT ABOR KILL TERM;
+trap 'CLEAR_UP' INT EXIT QUIT KILL TERM;
 #[ -f ./tongji.conf ] && . ./tongji.conf;
 #[ -f ./tongji.index ] && . ./tongji.index;
 if [ -f $cfgfile ]; then
@@ -766,7 +766,7 @@ fi
 
 [ $monthcheck -eq 1 ] && CHECK_MONTH_FIRSTDAY
 #合并完成
-echo "<--FINISH-->" >> $TASKFILE;
+[ $sendmail -eq 1 ] && echo "<--FINISH-->" >> $TASKFILE;
 #echo "urlfilter:$urlfilter";
 #echo "referfilter:$referfilter";
 #echo "uafilter:$uafilter";

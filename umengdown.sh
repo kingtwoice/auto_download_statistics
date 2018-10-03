@@ -18,11 +18,11 @@ HISD=$(echo $RETURN_STR | egrep -o 'hsid.{0,3}value="[[:alnum:]]*' | sed -e 's/\
 UMIDTOKEN=$(echo $RETURN_STR | egrep -o 'umidToken.{0,3}value="[[:alnum:]]*' | sed -e 's/\(.*value="\)\([[:alnum:]]*\)/\2/');
 CSRFTOKEN=$(echo $RETURN_STR | egrep -o '_csrf_token.{0,3}value="[[:alnum:]]*' | sed -e 's/\(.*value="\)\([[:alnum:]]*\)/\2/');
 MODULUS=$(echo $RETURN_STR | egrep -o 'modulus.{0,3}value="[[:alnum:]]*' | sed -e 's/\(.*value="\)\([[:alnum:]]*\)/\2/');
-UA="106#+YoBUCBNBcEBGQKaBBBBBpZb54jYt0K19uYYL0Kc94xVs0ZU74FVLCZi5VbYGi0Uk4EZ0itg5uyus0YR9fbYL0i19XrZt5kKBBgbylZc9MMhIaSKBB5byltqmWB/BCBEylmi4gO0ylmbyl6v3pDbOlmbyxzz0q4wylmUPgO0yV4byl6v3pVYt9LKBlYBM+Fv4NEskmGFS5zA5RkRkXcSNpQJnXLj2qUdWmSInWy/1JLqCXbI+UPbuOJanVyS2qXVfRoE4UkMMGLAdQzOnfWghOTSnfDM+Hg5KP9pngCUcJo0t4sL+f7cjOxM5gks3q6V2TSb+VsOFJy5lU2x3OmcgZdFkuiNnIAp3TDO+KkRy8tqvgd1GmnrgTBwnRCn+qMn3TDP6fJ1w+L88f0N6eleIKZ1nX01+IweKWKN2RkRsrS9tusEGmeMPDYg7RBOkwhdAWSs7gD/wJDZlUkInWc1gQDanXyP6qXJoA2Onf0Mc9zp2R2M+4hMQo+sdPZbd8N7CPZiduGuxJWqBCBFt2AD4QiEUy91Z1T1KerAlLvcRfQG5uHwIeHpkLzFfQPzckJ1Wf5+wmJwOu/k22UnwkMM6h0EvBLnfrkKBB7byIDv3pD+BCBo6qyFCmsKBBZM7EXKnboBKAJMQ9fOBCB0Scmi4FrajDSHXJxJDeSHRoh2N4dkECoBo72b1Zwrg2Tn3bM8v0oH3sE+ECoBo7nb1ZwQC9Tn3bM8v0oH3sE+ECoBo72b1Zb1z2Tn3bM8v0oH3sE+ECoBo7nb1Zb1HETn3bM8v0oH3sE+ECoBpRCb1Zb1HETn3bM8v0oH3bY2R25x0Ut+NCoB4meb1ZzzQph+fRM5t0yyjRSkf25/eRakXCY2ONs1BCBo7NFBQ5LKBKbsylDv32BjjDSHNVpql2SHmojA7DyFgBLkf25/lCoBKAJMQ2A5BCBtGlmi4gjB+zTn3JTYVRUn3bY2ONil3Eb+mojA7esKBBZM7EXKNCoB4meb1ZzJhAv+fRM5t0yyjRSkf25/eRakXCY2ONh5BCBtGlmi4gP7eETn3JTYVRUn3bY2ONil3Eb+mojA75LKBKbsylDv3dxJjDSHNVpql2SHmojA7DyFgBLkf25/NCoB4meb1ZzJhjh+fRM5t0yyjRSkf25/eRakXCY2ONh5BCBtGlmi4gPpP2Tn3JTYVRUn3bY2ONil3Eb+mojA75LKBKbsylDv3tCLjDSHNVpql2SHmojA7DyFgBLkf25/NCoB4meb1ZzJYAv+fRM5t0yyjRSkf25/eRakXCY2ONh5BCBtGlmi4gPor2Tn3JTYVRUn3bY2ONil3Eb+mojA75LKBKbsylDv3tdFjDSHNVpql2SHmojA7DyFgBLkf25/NCoB4meb1ZzFDE6+fRM5t0yyjRSkf25/eRakXCY2ONh5BCBtGlmi4gxfozTn3JTYVRUn3bY2ONil3Eb+mojA78yKBBebklDvGCoBpulbDKFF0VXYczN9kiCFUDan3JKNeXd2GCoBpqlbZOFR0VXYYQM8v0oH3yYGj+OuemDKBKjRym9vET0bStF+NmGD3ST6jRMA8iEzfQsiBCB9ScBy4xx0tn4Wj5QR0mr+fESHON/83oEGGCoBAnlblOF80VmUuEN9kiCFUDan3z5rWgO6mC==";
-
+#UA=$(cat /root/TB_UA);
+UA="112#ftGsj74WDeZ+4ZBwl+2zHMyPece2SZbU4ZByYqeY9+Pc9sxsnaPQ8+ZUQlgAYQCCwqWY3zxjKNcFUVlFHV4/0ni/YpUv34g6l6WyYZTgjufTEUGVlYF2vPOGwf2BbbF//cWsmfbwBBYqk+ZZr3AksFl2Xqxdkm7AAf5hxY5ep77fTv8IU//kshFaEfrc//GA+AJHAW491I5ATBRACc924lFL8Glx1MtCQyCI8xF67ea1eqhukko6u8OwlqcihxI+j7Ie6+ssBpWsdRfHJtpsdiN2HLm24W0rz/6Te/O+oUYHW5vLWZVpNhN/t0l1TpZd0jSnf62br6JiAiUHuu3ErJMO90uN6bedPlN4JHVFlaZbXaKaWwJCrH80kkgmYFoD3o4P9xLWHvLOvvJ8bZqXF64sWpwMxBUJOTkeTwHVR9bCNMPmuUEC50vl3rRtXELr2D4yoH0JgBpyj2D4uLZyZGpp8WedZniRi3qhQVj8aXL+Ed5KB8w/up3XEb+J74YD3C+kt+N8rkOiBgrzUJqvOH5K94v3NcT/q9RCpSj96/KecnZ5rNlwxdqNpg6L41pBC4DKKEXq2wfpFrrt9+396KssWrAHqXenfi2WcewfCxHO/QscBMeEn5g4hXkxDzRJZ6v5eco9W1oPe2YwPknEZtGOWhekq9Lx2a7yDSOREb5wBhBUl3qNDs41lA+C707aQLGLxMyWVXDimLkS8cl5yYJQdHR7VjBCmXyn/0j4dg6vVWIFFnsiDSV78gYZRkF6zv4eJiaeh9gxttk+CyYWnKSpWLNVEDmWP/RdwMlHgHMbp3bp8b3xluRNRzDUffI49/quQeCyAt2tz8N302gRbtfuj6YFqs02Sr9nDpJ4N8+vB/JdbxqTTMCgfDXlVFfQRtmweWN4DzXwSPFxrYlQEpd2MuGnek7fDBmViKkFjyKI3nJqQB3UB35GhN6kSxhGdk7Hp3c=";
 curl -c ./mmstat.cookie -e $LOGINURL "http://log.mmstat.com/v.gif?logtype=1&title=%u53CB%u76DF+%20%u7528%u6237%u4E2D%u5FC3&pre=&cache=3c3acc9&scr=1920x1080&cna=MylNEWhDFhICAbaWLo8XdCjB&spm-cnt=0.0.0.0.d37b4d50kuXwN&category=&uidaplus=&aplus&yunid=&&trid=0b83e0e615103100233575440e5eb9&asid=AQAAAACHgAVa+aC4WgAAAABDVdQ+EL4hjA==&p=1&o=win10&b=chrome50&s=1920x1080&w=webkit&ism=pc&lver=7.6.17&jsver=aplus_std&tag=1&stag=-1&ltag=-1" 2>/dev/null;
 #UA=$(echo $RETURN_STR | egrep -o 'UA_InputId.{0,3}value=".*>' | sed -e 's/\(.*value="\)\(.*\)\(\">\)/\2/');
-#echo UA:$UA;
+echo UA:$UA;
 #echo $MODULUS > ./rsa_rand;
 echo $HISD;
 echo $UMIDTOKEN;
@@ -69,16 +69,16 @@ function CHECK_BLOCK {
 #登录umeng,现已更改为登录alibaba再转umeng验证。
 function LOGIN {
 if [ $# -eq 0 ];then
-RETURN_STR=$(curl -l -H "Content-Type:application/x-www-form-urlencoded;charset=UTF-8" -e 'https://passport.alibaba.com/mini_login.htm?lang=zh_cn&appName=youmeng&appEntrance=default&styleType=auto&bizParams=&notLoadSsoView=true&notKeepLogin=false&isMobile=false&cssLink=https://passport.umeng.com/css/loginIframe.css&rnd='$RND'' -A "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36" -H "Host:passport.alibaba.com" -H "Origin:https://passport.alibaba.com" -H "X-Requested-With:XMLHttpRequest" -X POST -d 'loginId='$USERNAME'&password2='$PASSWORD'&checkCode=&appName=youmeng&appEntrance=default&bizParams=&ua='$UA'&hsid='$HSID'&rdsToken=&umidToken='$UMIDTOKEN'&isRequiresHasTimeout=false&isRDSReady=true&isUMIDReady=true&umidGetStatusVal=255&lrfcf=&lang=zh_cn&scene=&isMobile=false&screenPixel=1920x1080&navlanguage=zh-CN&navUserAgent=Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36&navAppVersion=&navPlatform=Win32&token=&nocAppKey=&csessionid=&sig=&captchaToken=&_csrf_token='$CSRFTOEKN'' -b ./alibaba.cookie "https://passport.alibaba.com/newlogin/login.do?fromSite=-2&appName=youmeng" 2>/dev/null);
+RETURN_STR=$(curl -l -H "Content-Type:application/x-www-form-urlencoded;charset=UTF-8" -e 'https://passport.alibaba.com/mini_login.htm?lang=zh_cn&appName=youmeng&appEntrance=default&styleType=auto&bizParams=&notLoadSsoView=true&notKeepLogin=false&isMobile=false&cssLink=https://passport.umeng.com/css/loginIframe.css&rnd='$RND'' -A "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36" -H ":path:/newlogin/login.do?fromSite=-2&appName=youmeng" -H ":scheme:https" -H ":authority:passport.alibaba.com" -H ":method:POST" -H "Origin:https://passport.alibaba.com" -H "X-Requested-With:XMLHttpRequest" -X POST -d 'loginId='$USERNAME'&password2='$PASSWORD'&checkCode=&appName=youmeng&appEntrance=default&bizParams=&ua='$UA'&hsid='$HSID'&rdsToken=&umidToken='$UMIDTOKEN'&isRequiresHasTimeout=false&isRDSReady=true&isUMIDReady=true&umidGetStatusVal=255&lrfcf=&lang=zh_cn&scene=&isMobile=false&screenPixel=1920x1080&navlanguage=zh-CN&navUserAgent=Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36&navAppVersion=&navPlatform=Win32&token=&nocAppKey=&csessionid=&sig=&captchaToken=&_csrf_token='$CSRFTOEKN'' -b ./alibaba.cookie "https://passport.alibaba.com/newlogin/login.do?fromSite=-2&appName=youmeng" 2>/dev/null);
 else
-RETURN_STR=$(curl -l -H "Content-Type:application/x-www-form-urlencoded;charset=UTF-8" -e 'https://passport.alibaba.com/mini_login.htm?lang=zh_cn&appName=youmeng&appEntrance=default&styleType=auto&bizParams=&notLoadSsoView=true&notKeepLogin=false&isMobile=false&cssLink=https://passport.umeng.com/css/loginIframe.css&rnd='$RND'' -A "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36" -H "Host:passport.alibaba.com" -H "Origin:https://passport.alibaba.com" -H "X-Requested-With:XMLHttpRequest" -X POST -d 'loginId='$USERNAME'&password2='$PASSWORD'&checkCode=&appName=youmeng&appEntrance=default&bizParams=&ua='$UA'&hsid='$HSID'&rdsToken=&umidToken='$UMIDTOKEN'&isRequiresHasTimeout=false&isRDSReady=true&isUMIDReady=true&umidGetStatusVal=255&lrfcf=&lang=zh_cn&scene=&isMobile=false&screenPixel=1920x1080&navlanguage=zh-CN&navUserAgent=Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36&navAppVersion=&navPlatform=Win32&token='$UMIDTOKEN'&nocAppKey='$1'&csessionid='$2'&sig='$3'&captchaToken=&_csrf_token='$CSRFTOEKN'' -b ./alibaba.cookie "https://passport.alibaba.com/newlogin/login.do?fromSite=-2&appName=youmeng" 2>/dev/null);
+RETURN_STR=$(curl -l -H "Content-Type:application/x-www-form-urlencoded;charset=UTF-8" -e 'https://passport.alibaba.com/mini_login.htm?lang=zh_cn&appName=youmeng&appEntrance=default&styleType=auto&bizParams=&notLoadSsoView=true&notKeepLogin=false&isMobile=false&cssLink=https://passport.umeng.com/css/loginIframe.css&rnd='$RND'' -A "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36" -H ":path:/newlogin/login.do?fromSite=-2&appName=youmeng" -H ":scheme:https" -H ":authority:passport.alibaba.com" -H ":method:POST" -H "Origin:https://passport.alibaba.com" -H "X-Requested-With:XMLHttpRequest" -X POST -d 'loginId='$USERNAME'&password2='$PASSWORD'&checkCode=&appName=youmeng&appEntrance=default&bizParams=&ua='$UA'&hsid='$HSID'&rdsToken=&umidToken='$UMIDTOKEN'&isRequiresHasTimeout=false&isRDSReady=true&isUMIDReady=true&umidGetStatusVal=255&lrfcf=&lang=zh_cn&scene=&isMobile=false&screenPixel=1920x1080&navlanguage=zh-CN&navUserAgent=Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36&navAppVersion=&navPlatform=Win32&token='$UMIDTOKEN'&nocAppKey='$1'&csessionid='$2'&sig='$3'&captchaToken=&_csrf_token='$CSRFTOEKN'' -b ./alibaba.cookie "https://passport.alibaba.com/newlogin/login.do?fromSite=-2&appName=youmeng" 2>/dev/null);
 fi
 echo $RETURN_STR;
 LOGIN_FLAG=$(echo $RETURN_STR | jq .content.data.loginType 2>/dev/null);
 if [[ $LOGIN_FLAG == "\"pwdLogin\"" ]];then
 	ST=$(echo $RETURN_STR | jq .content.data.st | sed s/\"//g 2>/dev/null); echo ST:$ST ;return 0;
 else
-	ST=1DmwLm0pkzEa-6ZYluVBDPg;
+	ST=1ZWmz1JhgubyUlF0pe00VDA;
 	return 0;
 fi
 }
@@ -345,7 +345,9 @@ case "$1" in
 ;;
 esac
 done
-trap 'CLEAR_UP' INT EXIT QUIT ABOR KILL TERM;
+#通过JAVA-htmlunit获取阿里巴巴登录UA字符串
+#/root/tbua.sh 
+trap 'CLEAR_UP' INT EXIT QUIT KILL TERM;
 eval SET_DOWNLOADURLFILE_BY_$FUNFLAG;
 if TEST_LOGIN;then
 echo "友盟登录成功";
@@ -387,4 +389,4 @@ fi
 [ $SEND_EMAIL -eq 1 ] && SEND_EMAIL 0;
 [ $MC -eq 1 ] && MONTH_MISSION;
 #合并完成
-echo "<--FINISH-->" >> $TASKFILE;
+[ $SEND_EMAIL -eq 1 ] && echo "<--FINISH-->" >> $TASKFILE;

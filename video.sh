@@ -15,14 +15,15 @@ function gzipfile {
 }
 
 function get_watchperson {
-	awk '{if(match($7,/.*(zywszy_sd|1_sd).*\.ts/) && $9<400) print $7}' $1 | awk '{data[$1]++;}END{for(i in data) print data[i],i}' | sort -rn > $TEMPFILE_ZY;
-	awk '{if(match($7,/.*(xzwszy|3_sd).*\.ts/) && $9<400) print $7}' $1 | awk '{data[$1]++;}END{for(i in data) print data[i],i}' | sort -rn > $TEMPFILE_HY;
+	#awk '{if(match($7,/.*(zywszy_sd|1_sd).*\.ts/) && $9<400) print $7}' $1 | awk '{data[$1]++;}END{for(i in data) print data[i],i}' | sort -rn > $TEMPFILE_ZY;
+	#awk '{if(match($7,/.*(xzwszy|3_sd).*\.ts/) && $9<400) print $7}' $1 | awk '{data[$1]++;}END{for(i in data) print data[i],i}' | sort -rn > $TEMPFILE_HY;
+	awk '{if($9<400&&match($7,/\.ts/))data[$7]++}END{for(i in data)print data[i],i}' $1 | sort -rn > $TEMPFILE_VIDEO;
 # | grep -m 1 zywszy_sd
 }
 
 function get_zy {
-	local a=$(fgrep -m 1 zywszy_sd $TEMPFILE_ZY | cut -d" " -f1);
-	local b=$(fgrep -m 1 1_sd $TEMPFILE_ZY | cut -d" " -f1);
+	local a=$(fgrep -m 1 zywszy_sd $TEMPFILE_VIDEO | cut -d" " -f1);
+	local b=$(fgrep -m 1 1_sd $TEMPFILE_VIDEO | cut -d" " -f1);
 	num=0;
 	[ $a -gt 0 ] 2>/dev/null && let num+=$a;
 	[ $b -gt 0 ] 2>/dev/null && let num+=$b;
@@ -30,8 +31,8 @@ function get_zy {
 }
 
 function get_hy {
-	local a=$(fgrep -m 1 xzwszy $TEMPFILE_HY | cut -d" " -f1);
-        local b=$(fgrep -m 1 3_sd $TEMPFILE_HY | cut -d" " -f1);
+	local a=$(fgrep -m 1 xzwszy_sd $TEMPFILE_VIDEO | cut -d" " -f1);
+        local b=$(fgrep -m 1 3_sd $TEMPFILE_VIDEO | cut -d" " -f1);
         num=0;
         [ $a -gt 0 ] 2>/dev/null && let num+=$a;
         [ $b -gt 0 ] 2>/dev/null && let num+=$b;
@@ -40,8 +41,9 @@ function get_hy {
 
 SERVICE=xzitvcnstream;
 DOMAIN=stream.xzitv.cn;
-TEMPFILE_ZY=video_temp_zy;
-TEMPFILE_HY=video_temp_hy;
+#TEMPFILE_ZY=video_temp_zy;
+#TEMPFILE_HY=video_temp_hy;
+TEMPFILE_VIDEO=video.tmp;
 TIME=$(date -d '1 day ago' +%F);
 OUTPUTFILE=$(pwd)/${TIME}_live.txt;
 MAX_ZY=0;
